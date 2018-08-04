@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "114529087299",
+    "firebase_url": "https://ongtalk-2f726.firebaseio.com",
+    "project_id": "ongtalk-2f726",
+    "storage_bucket": "ongtalk-2f726.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114529087299:android:cd24af1d09f56317",
+        "android_client_info": {
+          "package_name": "com.galid.ongtalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "114529087299-nd7qkkh9cr3ee8d0vue3683dtbmlssvf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.galid.ongtalk",
+            "certificate_hash": "e9c8eef3fc82420802bf42ae120d5df0a9ec13e8"
+          }
+        },
+        {
+          "client_id": "114529087299-kkrjk7698js3he46a0scd0e45ifu3hc8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ4lhXglZkW6oFUgXYgcN6j6xTYVMhPsc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "114529087299-kkrjk7698js3he46a0scd0e45ifu3hc8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
