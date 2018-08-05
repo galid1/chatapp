@@ -70,14 +70,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = mFirebaseAuth.getCurrentUser();
+
                 if(user != null){
-                    //TODO SUCCESS
+                    //TODO SIGN IN
                     Intent intent = new Intent(LoginActivity.this ,MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
                 else{
-                    //TODO FAIL
+                    //TODO SIGN OUT
                 }
             }
         };
@@ -96,9 +97,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (!task.isSuccessful()) {
                     //TODO FAIL
                     Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                } else {
-                    //TODO SUCCESS
-
                 }
             }
         });

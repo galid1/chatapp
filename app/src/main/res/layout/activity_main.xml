@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".view.main.MainActivity">
 
+    <FrameLayout
+        android:id="@+id/framelayout_mainactivity_display"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/bottomnavigationview_mainactivity"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></FrameLayout>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomnavigationview_mainactivity"
         android:layout_width="match_parent"
@@ -16,7 +26,6 @@
         app:itemIconTint="@android:color/white"
         app:menu="@menu/bottom_navigation_main"
         >
-
     </android.support.design.widget.BottomNavigationView>
 
 </RelativeLayout>
