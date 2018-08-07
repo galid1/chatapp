@@ -54,37 +54,37 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void attachFriendListFragment(){
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_mainactivity_display);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_mainactivity_fragment);
         FriendListFragment friendListFragment = FriendListFragment.newInstance();
 
         if(fragment == null) {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.framelayout_mainactivity_display, friendListFragment)
+                    .add(R.id.framelayout_mainactivity_fragment, friendListFragment)
                     .commit();
         }
         else{
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.framelayout_mainactivity_display, friendListFragment , FriendListFragment.TAG_FRAGMENT)
+                    .replace(R.id.framelayout_mainactivity_fragment, friendListFragment , FriendListFragment.TAG_FRAGMENT)
                     .commit();
         }
     }
 
     public void attachSettingsFragment(){
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_mainactivity_display);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_mainactivity_fragment);
         SettingsFragment settingsFragment = SettingsFragment.newInstance();
 
         if(fragment == null) {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.framelayout_mainactivity_display, settingsFragment)
+                    .add(R.id.framelayout_mainactivity_fragment, settingsFragment)
                     .commit();
         }
         else{
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.framelayout_mainactivity_display, settingsFragment , SettingsFragment.TAG_FRAGMENT)
+                    .replace(R.id.framelayout_mainactivity_fragment, settingsFragment , SettingsFragment.TAG_FRAGMENT)
                     .commit();
         }
     }

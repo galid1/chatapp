@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearlayout_chatactivity_titlebar"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/recyclerview_chatctivity_chatlog"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#20e4ac"
+        android:orientation="horizontal"
+        ></LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_chatctivity_chatlog"
+        android:layout_above="@+id/linearlayout_chatactivity_messagebar"
+        android:layout_width="match_parent"
+        android:layout_height="461dp"
+        android:background="#23f9bc"
+    />
+
+    <RelativeLayout
+        android:id="@+id/linearlayout_chatactivity_messagebar"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:id="@+id/edittext_chatactivity_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/button_chatactivity_send" />
+        <Button
+            android:id="@+id/button_chatactivity_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="전송" />
+    </RelativeLayout>
+
+</RelativeLayout>

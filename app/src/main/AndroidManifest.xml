@@ -22,7 +22,8 @@
         <activity android:name=".view.login.LoginActivity" />
         <activity android:name=".view.join.JoinActivity" />
         <activity android:name=".view.main.MainActivity" />
-        <activity android:name=".view.profile.ProfileActivity"></activity>
+        <activity android:name=".view.profile.ProfileActivity" />
+        <activity android:name=".view.chat.ChatActivity"></activity>
     </application>
 
 </manifest>

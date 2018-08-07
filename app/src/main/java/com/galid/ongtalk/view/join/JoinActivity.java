@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.galid.ongtalk.R;
-import com.galid.ongtalk.constant.FirebaseDatabaseConstant;
+import com.galid.ongtalk.util.constant.FirebaseConstant;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.view.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -109,7 +109,7 @@ public class JoinActivity extends AppCompatActivity{
                         if (task.isSuccessful()) {
                             final String uid = task.getResult().getUser().getUid(); //계정생성 완료 후 생성된 uid 불러옴
 
-                            FirebaseStorage.getInstance().getReference().child(FirebaseDatabaseConstant.FIREBASE_DATABASE_USERIMAGE).child(uid)
+                            FirebaseStorage.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERIMAGE).child(uid)
                                     .putFile(profileImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -118,12 +118,13 @@ public class JoinActivity extends AppCompatActivity{
                                         UserModel userModel = new UserModel();
                                         userModel.userName = name;
                                         userModel.profileImageUrl = imageUrl;
+                                        userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                                         JoinActivity.this.finish();
                                         afterJoinSuccess();
 
                                         FirebaseDatabase.getInstance()
-                                                .getReference().child(FirebaseDatabaseConstant.FIREBASE_DATABASE_USERLIST).child(uid).setValue(userModel);
+                                                .getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(uid).setValue(userModel);
                                     }
                                 }
                             });

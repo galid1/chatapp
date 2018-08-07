@@ -7,7 +7,7 @@
     tools:context=".view.main.MainActivity">
 
     <FrameLayout
-        android:id="@+id/framelayout_mainactivity_display"
+        android:id="@+id/framelayout_mainactivity_fragment"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"

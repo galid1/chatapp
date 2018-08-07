@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // 회원가입 화면으로
     @OnClick(R.id.button_loginactivity_join)
-    public void goJoin() {
+    public void showJoinActivity() {
         Intent intent = new Intent(this, JoinActivity.class);
         startActivity(intent);
     }
