@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+//TODO 친구 검색기능
 public class FriendListFragment extends Fragment{
     public static final String TAG_FRAGMENT = "FRIENDLIST";
     private Unbinder unBinder;
@@ -67,7 +68,7 @@ public class FriendListFragment extends Fragment{
             }
         });
 
-        RecyclerView recyclerViewFriendList = friendListFragment.findViewById(R.id.recyclerview_mainfragment_friendlist);
+        RecyclerView recyclerViewFriendList = friendListFragment.findViewById(R.id.recyclerview_friendlistfragment_friendlist);
         recyclerViewFriendList.setLayoutManager(new LinearLayoutManager(container.getContext()));
         recyclerViewFriendList.setAdapter(new FriendListFragmentAdapter());
 
@@ -108,7 +109,6 @@ public class FriendListFragment extends Fragment{
         @Override
         public FriendListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View friendListItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_friendlistfragment_item_user, parent , false);
-
             return new FriendListItemViewHolder(friendListItem);
         }
 

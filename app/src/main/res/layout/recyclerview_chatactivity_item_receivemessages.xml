@@ -27,5 +27,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/textview_chatactivity_item_receivename"/>
+    <TextView
+        android:id="@+id/textview_chatactivity_item_receivetime"
+        android:text="받은 시간"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/textview_chatactivity_item_receivemessages"/>
 
 </RelativeLayout>

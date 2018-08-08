@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    >
+
+    <ImageView
+        android:id="@+id/imageview_chatroomlistfragment_item_profile"
+        android:layout_alignParentLeft="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        />
+
+    <TextView
+        android:id="@+id/textview_chatroomlistfragment_item_chatroomname"
+        android:text="채팅방 이름"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/imageview_chatroomlistfragment_item_profile"/>
+
+    <TextView
+        android:id="@+id/textview_chatroomlistfragment_item_lastmessage"
+        android:text="마지막 채팅 내용"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageview_chatroomlistfragment_item_profile"
+        android:layout_below="@id/textview_chatroomlistfragment_item_chatroomname"/>
+
+    <TextView
+        android:id="@+id/textview_chatroomlistfragment_item_lastmessagetime"
+        android:text="시간"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/textview_chatroomlistfragment_item_messagenum"
+        android:text="안읽은 문자 수"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/textview_chatroomlistfragment_item_lastmessagetime"/>
+
+</RelativeLayout>

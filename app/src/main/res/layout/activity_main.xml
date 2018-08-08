@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".view.main.MainActivity">
 
+    <!--test-->
+    <Button
+        android:id="@+id/testbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <FrameLayout
         android:id="@+id/framelayout_mainactivity_fragment"
         android:layout_alignParentTop="true"

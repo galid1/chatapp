@@ -1,4 +1,4 @@
-package com.galid.ongtalk.model;
+package com.galid.ongtalk.test;
 
 import java.util.ArrayList;
 import java.util.List;

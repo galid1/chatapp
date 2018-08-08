@@ -13,7 +13,7 @@ import com.galid.ongtalk.R;
 import com.galid.ongtalk.view.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
-
+//TODO 전화번호부 동기화
 public class SettingsFragment extends Fragment {
     public static final String TAG_FRAGMENT = "SETTINGS";
 

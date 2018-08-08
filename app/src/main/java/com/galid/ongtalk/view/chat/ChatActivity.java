@@ -24,18 +24,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-//TODO 앱 껏다키면 챗방 다시만들어짐 , 채팅메시지 1개만 붙음
 
 public class ChatActivity extends AppCompatActivity {
     public static final String DESTINATION_UID = "DESTINATIONUID";
 
-    private String destinationUid;
+    private String opponentUid;
     private String myUid;
     private String chatRoomUid;
 
@@ -53,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //채팅을 요구하는 id (나)
-        destinationUid = getIntent().getStringExtra(DESTINATION_UID); // 채팅을 당하는 id (상대)
+        opponentUid = getIntent().getStringExtra(DESTINATION_UID); // 채팅을 당하는 id (상대)
 
         recyclerViewChatLog = findViewById(R.id.recyclerview_chatctivity_chatlog);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -68,13 +70,18 @@ public class ChatActivity extends AppCompatActivity {
     @OnClick(R.id.button_chatactivity_send)
     public void sendMessage(){
         ChatModel chatModel = new ChatModel();
-        chatModel.users.put(myUid,true);          // TODO 처음에만 , 대화방이 생성된 이후에는 요청자는 저장 안되게하기
-        chatModel.users.put(destinationUid,true);
+
+        chatModel.users.add(myUid);          // TODO 처음에만 , 대화방이 생성된 이후에는 요청자는 저장 안되게하기
+        chatModel.users.add(opponentUid);
+
+        Date date = new Date();                   // 보낼 때의 시간
+        SimpleDateFormat currentTime = new SimpleDateFormat("a hh:mm", Locale.KOREA);
 
         String chatMessage = editTextMessage.getText().toString();      //보낼 메시지
         final ChatModel.Message chatMessageModel = new ChatModel.Message();   // 서버에 저장될 메시지 형태
         chatMessageModel.uid = myUid;
         chatMessageModel.message = chatMessage;
+        chatMessageModel.time = currentTime.format(date);
 
         if(chatRoomUid == null)
             checkDuplicatedChatRoomAndGetChatRoomKey(); // 채팅방 중복을 체크하고 채팅방 키를 가져옴 (but 데이터가 바뀔 때만 실행됨)
@@ -106,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
                     ChatModel chatModel = item.getValue(ChatModel.class);
 
                     //TODO 여러사람들과의 채팅방 중복도 체크할 필요성이 있음.. 인가 ?
-                    if(chatModel.users.containsKey(destinationUid)){
+                    if(chatModel.users.contains(opponentUid)){
                         chatRoomUid = item.getKey();
                         //TODO (CODE:1)코드수정 요구 결합도 높음
                         chatAdapter.getMessageListFromFirebaseDatabase();
@@ -130,13 +137,13 @@ public class ChatActivity extends AppCompatActivity {
         public static final int VIEWTYPE_SENDMESSAGE = 0;
         public static final int VIEWTYPE_RECEIVEMESSAGE = 1;
 
-        List<ChatModel.Message> messages;
-        UserModel opponent;
+        private List<ChatModel.Message> messages;
+        private UserModel opponent;
 
         public ChatAdapter() {
             messages = new ArrayList<>();
 
-            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(destinationUid)
+            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponentUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -147,14 +154,6 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 });
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if(messages.get(position).uid.equals(myUid))
-                return VIEWTYPE_SENDMESSAGE;
-            else
-                return VIEWTYPE_RECEIVEMESSAGE;
         }
 
         //TODO (CODE:1)이 코드를 어디선가 꼭 호출해야한다 그 호출하는 클래스와의 결합도를 낮추기위해 이코드를 나중에 수정하자
@@ -180,6 +179,14 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
             }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if(messages.get(position).uid.equals(myUid))
+                return VIEWTYPE_SENDMESSAGE;
+            else
+                return VIEWTYPE_RECEIVEMESSAGE;
         }
 
         @Override
@@ -217,14 +224,17 @@ public class ChatActivity extends AppCompatActivity {
     // 내가 보내는 메시지 뷰홀더
     private class SendMessageViewHolder extends RecyclerView.ViewHolder {
         TextView textViewSendMessages;
+        TextView textViewSendTime;
 
         public SendMessageViewHolder(View itemView) {
             super(itemView);
             textViewSendMessages = itemView.findViewById(R.id.textview_chatactivity_item_sendmessages);
+            textViewSendTime = itemView.findViewById(R.id.textview_chatactivity_item_sendtime);
         }
 
         public void bindSendMessage(ChatModel.Message message){
             textViewSendMessages.setText(message.message);
+            textViewSendTime.setText(message.time);
         }
 
     }
@@ -234,17 +244,20 @@ public class ChatActivity extends AppCompatActivity {
         ImageView imageViewReceiveProfile;
         TextView textViewReceiveName;
         TextView textViewReceiveMessages;
+        TextView textViewReceiveTime;
 
         public ReceiveMessageViewHolder(View itemView) {
             super(itemView);
             imageViewReceiveProfile = itemView.findViewById(R.id.imageview_chatactivity_item_receiveprofileimage);
             textViewReceiveName = itemView.findViewById(R.id.textview_chatactivity_item_receivename);
             textViewReceiveMessages = itemView.findViewById(R.id.textview_chatactivity_item_receivemessages);
+            textViewReceiveTime = itemView.findViewById(R.id.textview_chatactivity_item_receivetime);
         }
 
         public void bindReceiveMessage(ChatModel.Message message , UserModel opponent){
             textViewReceiveMessages.setText(message.message);
             textViewReceiveName.setText(opponent.userName);
+            textViewReceiveTime.setText(message.time);
             Glide.with(imageViewReceiveProfile)
                     .load(opponent.profileImageUrl)
                     .into(imageViewReceiveProfile);
