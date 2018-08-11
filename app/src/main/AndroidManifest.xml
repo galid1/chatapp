@@ -25,7 +25,8 @@
         <activity android:name=".view.profile.ProfileActivity" />
         <activity android:name=".view.chat.ChatActivity" />
         <activity android:name=".test.TesterActivity" />
-        <activity android:name=".test.TestActivity"></activity>
+        <activity android:name=".test.TestActivity" />
+        <activity android:name=".view.addfriend.AddFriendActivity"></activity>
     </application>
 
 </manifest>

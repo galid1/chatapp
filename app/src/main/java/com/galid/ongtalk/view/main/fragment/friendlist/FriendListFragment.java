@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.util.constant.FirebaseConstant;
 import com.galid.ongtalk.model.UserModel;
+import com.galid.ongtalk.view.addfriend.AddFriendActivity;
 import com.galid.ongtalk.view.chat.ChatActivity;
 import com.galid.ongtalk.view.profile.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,12 +36,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-//TODO 친구 검색기능
+//TODO  최근 추가된 친구, 친구 정렬
 public class FriendListFragment extends Fragment{
     public static final String TAG_FRAGMENT = "FRIENDLIST";
-    private Unbinder unBinder;
-    public TextView textViewMyName;
-    public ImageView imageViewMyProfileImage;
+
+    private TextView textViewMyName;
+    private TextView textViewFriendListNum;
+    private ImageView imageViewMyProfileImage;
+    private ImageView buttonAddFriend;
+    private EditText editTextSearch;
+
+    private FriendListFragmentAdapter adapter;
+
     //TODO 내프로필 누르면 다른사람 누르는것과 같게 구현
 
     public static FriendListFragment newInstance(){
@@ -47,9 +58,21 @@ public class FriendListFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View friendListFragment = inflater.inflate(R.layout.fragment_main_friendlist, container , false);
+        final View friendListFragment = inflater.inflate(R.layout.fragment_main_friendlist, container , false);
+
         textViewMyName = friendListFragment.findViewById(R.id.textview_friendlistfragment_myname);
+        textViewFriendListNum = friendListFragment.findViewById(R.id.textview_friendlistfragment_friendlistnum);
         imageViewMyProfileImage = friendListFragment.findViewById(R.id.imageview_friendlistfragment_myprofileimage);
+        editTextSearch = friendListFragment.findViewById(R.id.edittext_friendlistfragment_search);
+
+        buttonAddFriend = friendListFragment.findViewById(R.id.imageview_friendlistfragment_addfriendbutton);
+        buttonAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(friendListFragment.getContext(), AddFriendActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // 내 프로필 처리 코드
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -70,7 +93,25 @@ public class FriendListFragment extends Fragment{
 
         RecyclerView recyclerViewFriendList = friendListFragment.findViewById(R.id.recyclerview_friendlistfragment_friendlist);
         recyclerViewFriendList.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        recyclerViewFriendList.setAdapter(new FriendListFragmentAdapter());
+        adapter = new FriendListFragmentAdapter();
+        recyclerViewFriendList.setAdapter(adapter);
+
+        // 검색을 위한 리스너
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // input창에 문자를 입력할때마다 호출된다.
+                // search 메소드를 호출한다.
+                String searchName = editTextSearch.getText().toString();
+                adapter.search(searchName);
+            }
+        });
 
         return friendListFragment;
     }
@@ -78,12 +119,16 @@ public class FriendListFragment extends Fragment{
     public class FriendListFragmentAdapter extends RecyclerView.Adapter<FriendListFragmentAdapter.FriendListItemViewHolder> {
 
         private List<UserModel> friendList;
+        private List<UserModel> searchList;
 
         public FriendListFragmentAdapter(){
             friendList = new ArrayList<>();
+            searchList = new ArrayList<>();
+
             final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(myUid).child(FirebaseConstant.FIREBASE_DATABASE_FRIENDLIST)
+                    .addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     friendList.clear();
@@ -95,7 +140,12 @@ public class FriendListFragment extends Fragment{
 
                         // 아니라면 보여질 데이타셋에 추가
                         friendList.add(user);
+                        // 친구숫자 셋팅
+                        textViewFriendListNum.setText(Integer.toString(friendList.size()));
                     }
+                    // 친구검색을 위한 리스트에 전체 친구목록을 복사해 놓는다
+                    searchList.addAll(friendList);
+
                     notifyDataSetChanged();
                 }
 
@@ -104,6 +154,33 @@ public class FriendListFragment extends Fragment{
 
                 }
             });
+        }
+
+        // 검색을 수행하는 메소드
+        public void search(String userName) {
+            // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
+            friendList.clear();
+
+            // 문자 입력이 없을때는 모든 데이터를 보여준다.
+            if (userName.length() == 0) {
+                friendList.addAll(searchList);
+            }
+            // 문자 입력을 할때..
+            else
+            {
+                // 리스트의 모든 데이터를 검색한다.
+                for(int i = 0;i < searchList.size(); i++)
+                {
+                    // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+                    if (searchList.get(i).userName.toLowerCase().contains(userName))
+                    {
+                        // 검색된 데이터를 리스트에 추가한다.
+                        friendList.add(searchList.get(i));
+                    }
+                }
+            }
+            // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
+            adapter.notifyDataSetChanged();
         }
 
         @Override

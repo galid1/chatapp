@@ -64,6 +64,7 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter();
         recyclerViewChatLog.setAdapter(chatAdapter);
 
+        // 액티비티 생성시 이미 생성된 채팅방인지 확인
         checkDuplicatedChatRoomAndGetChatRoomKey();
     }
 
@@ -83,8 +84,7 @@ public class ChatActivity extends AppCompatActivity {
         chatMessageModel.message = chatMessage;
         chatMessageModel.time = currentTime.format(date);
 
-        if(chatRoomUid == null)
-            checkDuplicatedChatRoomAndGetChatRoomKey(); // 채팅방 중복을 체크하고 채팅방 키를 가져옴 (but 데이터가 바뀔 때만 실행됨)
+        checkDuplicatedChatRoomAndGetChatRoomKey();
 
         if(chatRoomUid == null){ //중복 안된 경우
             FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // 채팅방 중복체크 (중복되었으면 그채팅방의 UID를 firebaseDatabase로 부터 얻어온다)
     private void checkDuplicatedChatRoomAndGetChatRoomKey() {
-        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot item : dataSnapshot.getChildren()){

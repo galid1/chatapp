@@ -109,7 +109,7 @@ public class JoinActivity extends AppCompatActivity{
                         if (task.isSuccessful()) {
                             final String uid = task.getResult().getUser().getUid(); //계정생성 완료 후 생성된 uid 불러옴
 
-                            FirebaseStorage.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERIMAGE).child(uid)
+                            FirebaseStorage.getInstance().getReference().child(FirebaseConstant.FIREBASE_STORAGE_USERIMAGE).child(uid)
                                     .putFile(profileImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {

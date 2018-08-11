@@ -39,7 +39,6 @@ public class ChatRoomListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View chatRoomListFragment = inflater.inflate(R.layout.fragment_main_chatroomlist, container , false);
 
-
         RecyclerView recyclerViewChatRoomList = chatRoomListFragment.findViewById(R.id.recyclerview_chatroomlistfragment_chatroomlist);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(chatRoomListFragment.getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -60,7 +59,7 @@ public class ChatRoomListFragment extends Fragment{
         }
 
         public void getChatRoomListFromFirebaseDatabase(){
-            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).addListenerForSingleValueEvent(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     chatRoomList.clear();
@@ -101,16 +100,14 @@ public class ChatRoomListFragment extends Fragment{
                         }
                     });
                 }
-
-
             }
-
         }
 
         @Override
         public int getItemCount() {
             return chatRoomList.size();
         }
+
     }
 
     private class ChatRoomListViewHolder extends RecyclerView.ViewHolder {
