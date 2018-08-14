@@ -193,12 +193,12 @@ public class FriendListFragment extends Fragment{
         public void onBindViewHolder(FriendListItemViewHolder holder, final int position) {  //TODO FIX IT
             holder.bind(friendList.get(position));
 
-            //프로필창 띄우기
+            //프로필 보여주기
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String opponentUid = friendList.get(position).uid;
-                    Intent intent = ProfileActivity.newIntent(view.getContext(), opponentUid);
+                    UserModel opponent = friendList.get(position);
+                    Intent intent = ProfileActivity.newIntent(view.getContext(), opponent);
                     startActivity(intent);
                 }
             });

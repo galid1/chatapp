@@ -96,24 +96,6 @@ public class ChatRoomListFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(final ChatRoomListViewHolder holder, final int position) {
-
-            // 각 홀더에 리스너 달기 ( 채팅방 열리게 )
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                String opponentUid = "";
-                @Override
-                public void onClick(View view) {
-                    //상대 uid 받아오기
-                    for(String opponent : chatRoomList.get(position).users) {
-                        if(!myUid.equals(opponent)) {
-                            opponentUid = opponent;
-                            break;
-                        }
-                    }
-                    Intent intent = ChatActivity.newIntent(getActivity(), opponentUid);
-                    startActivity(intent);
-                }
-            });
-
             // 채팅방 프로필과 이름 셋팅
             String opponentUid = "";
             // TODO (CODE:2)모든 사용자에 대해 아래와 같은 처리를 하도록 바꾸기
@@ -139,6 +121,34 @@ public class ChatRoomListFragment extends Fragment{
             chatMessageMap.putAll(chatRoomList.get(position).chatmessages);
             String lastMessageKey = (String) chatMessageMap.keySet().toArray()[0];
             holder.bindLastMessage(chatRoomList.get(position).chatmessages.get(lastMessageKey));
+
+            // 각 홀더에 리스너 달기 ( 채팅방 열리게 )
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                String opponentUid = "";
+                @Override
+                public void onClick(View view) {
+                    //상대 uid 받아오기
+                    for(String opponent : chatRoomList.get(position).users) {
+                        if(!myUid.equals(opponent)) {
+                            opponentUid = opponent;
+                            break;
+                        }
+                    }
+                    //상대 모델을 받아와 채팅액티비티에 넘겨주며 열기
+                    FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponentUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserModel opponent = dataSnapshot.getValue(UserModel.class);
+                            Intent intent = ChatActivity.newIntent(getActivity(), opponent);
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            });
+
         }
 
         @Override

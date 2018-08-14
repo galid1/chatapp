@@ -39,9 +39,8 @@ import butterknife.OnClick;
 
 //TODO 상대가 건 채팅에대해서 오류나는것 해결(상대 UserModel을 받아오기)
 public class ChatActivity extends AppCompatActivity {
-    public static final String DESTINATION_UID = "DESTINATIONUID";
+    public static final String OPPONENT = "OPPONENT";
 
-    private String opponentUid;
     private String myUid;
     private String chatRoomUid;
 
@@ -54,9 +53,9 @@ public class ChatActivity extends AppCompatActivity {
     @BindView(R.id.edittext_chatactivity_message)
     public EditText editTextMessage;
 
-    public static Intent newIntent(Context context, String opponentUid){
+    public static Intent newIntent(Context context, UserModel opponent){
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(DESTINATION_UID, opponentUid);
+        intent.putExtra(OPPONENT, opponent);
         return intent;
     }
 
@@ -69,8 +68,7 @@ public class ChatActivity extends AppCompatActivity {
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //채팅을 요구하는 id (나)
 
         if(getIntent() != null) {
-            opponentUid = getIntent().getStringExtra(DESTINATION_UID); // 채팅을 당하는 id (상대)
-            loadOpponent();
+            opponent = (UserModel) getIntent().getSerializableExtra(OPPONENT); // 채팅을 당하는 id (상대)
         }
 
         recyclerViewChatLog = findViewById(R.id.recyclerview_chatctivity_chatlog);
@@ -102,7 +100,7 @@ public class ChatActivity extends AppCompatActivity {
             ChatModel chatModel = new ChatModel();
 
             chatModel.users.add(myUid);          // TODO 처음에만 , 대화방이 생성된 이후에는 요청자는 저장 안되게하기
-            chatModel.users.add(opponentUid);
+            chatModel.users.add(opponent.uid);
 
             FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -130,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
                     ChatModel chatModel = item.getValue(ChatModel.class);
 
                     //TODO 여러사람들과의 채팅방 중복도 체크할 필요성이 있음.. 인가 ?
-                    if(chatModel.users.contains(opponentUid)){
+                    if(chatModel.users.contains(opponent.uid) && chatModel.users.contains(myUid)){
                         chatRoomUid = item.getKey();
                         //TODO (CODE:1)코드수정 요구 결합도 높음
                         chatAdapter.getMessageListFromFirebaseDatabase();
@@ -151,7 +149,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // 상대 채팅자 객체 받기 (비동기라 그냥넘어가는 문제 해결하기)
     private void loadOpponent(){
-        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponentUid)
+        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponent.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -162,7 +160,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     // Recyclerview Adapter
     class ChatAdapter extends RecyclerView.Adapter{
