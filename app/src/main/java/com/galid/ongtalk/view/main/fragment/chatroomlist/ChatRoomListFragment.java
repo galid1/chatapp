@@ -1,6 +1,7 @@
 package com.galid.ongtalk.view.main.fragment.chatroomlist;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,8 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.ChatModel;
+import com.galid.ongtalk.model.ChatMessageModel;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.util.constant.FirebaseConstant;
+import com.galid.ongtalk.view.chat.ChatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,7 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 //TODO 채팅방 이름 변경 가능하게 DEFAULT는 상대방 이름(닉네임)
 public class ChatRoomListFragment extends Fragment{
@@ -50,10 +56,11 @@ public class ChatRoomListFragment extends Fragment{
 
     class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListViewHolder>{
         // 리사이클러뷰 데이터셋
-        private List<ChatModel> chatRoomList = new ArrayList<>();
+        private List<ChatModel> chatRoomList;
         private String myUid;
 
         public ChatRoomListAdapter() {
+            chatRoomList = new ArrayList<>();
             myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             getChatRoomListFromFirebaseDatabase();
         }
@@ -64,8 +71,14 @@ public class ChatRoomListFragment extends Fragment{
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     chatRoomList.clear();
                     for(DataSnapshot item : dataSnapshot.getChildren()){
-                        ChatModel chatModel = item.getValue(ChatModel.class);
-                        chatRoomList.add(chatModel);
+                        //채팅방에 내 uid가 포합되어 있으면 채팅방 리스트에 추가 (알고리즘 매우 비효율적)
+                        for(DataSnapshot users : item.child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).getChildren()) {
+                            if(users.getValue().equals(myUid)) {
+                                ChatModel chatRoom = item.getValue(ChatModel.class);
+                                chatRoomList.add(chatRoom);
+                            }
+                        }
+
                     }
                     notifyDataSetChanged();
                 }
@@ -83,6 +96,25 @@ public class ChatRoomListFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(final ChatRoomListViewHolder holder, final int position) {
+
+            // 각 홀더에 리스너 달기 ( 채팅방 열리게 )
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                String opponentUid = "";
+                @Override
+                public void onClick(View view) {
+                    //상대 uid 받아오기
+                    for(String opponent : chatRoomList.get(position).users) {
+                        if(!myUid.equals(opponent)) {
+                            opponentUid = opponent;
+                            break;
+                        }
+                    }
+                    Intent intent = ChatActivity.newIntent(getActivity(), opponentUid);
+                    startActivity(intent);
+                }
+            });
+
+            // 채팅방 프로필과 이름 셋팅
             String opponentUid = "";
             // TODO (CODE:2)모든 사용자에 대해 아래와 같은 처리를 하도록 바꾸기
             for(int i = 0; i < chatRoomList.get(position).users.size(); i++){
@@ -101,6 +133,12 @@ public class ChatRoomListFragment extends Fragment{
                     });
                 }
             }
+
+            // 마지막으로 받은 메시지와 시간 셋팅
+            Map<String, ChatMessageModel> chatMessageMap = new TreeMap<>(Collections.reverseOrder());
+            chatMessageMap.putAll(chatRoomList.get(position).chatmessages);
+            String lastMessageKey = (String) chatMessageMap.keySet().toArray()[0];
+            holder.bindLastMessage(chatRoomList.get(position).chatmessages.get(lastMessageKey));
         }
 
         @Override
@@ -150,7 +188,7 @@ public class ChatRoomListFragment extends Fragment{
                     .into(imageViewProfile);
         }
 
-        public void bindMessage(ChatModel.Message message){
+        public void bindLastMessage(ChatMessageModel message){
             textViewLastMessage.setText(message.message);
             textViewLastMessageTime.setText(message.time);
         }

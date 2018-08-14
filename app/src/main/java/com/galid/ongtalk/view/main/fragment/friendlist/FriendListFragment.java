@@ -193,11 +193,13 @@ public class FriendListFragment extends Fragment{
         public void onBindViewHolder(FriendListItemViewHolder holder, final int position) {  //TODO FIX IT
             holder.bind(friendList.get(position));
 
+            //프로필창 띄우기
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String destinationUid = friendList.get(position).uid;
-                    showProfileActivity(view, destinationUid);
+                    String opponentUid = friendList.get(position).uid;
+                    Intent intent = ProfileActivity.newIntent(view.getContext(), opponentUid);
+                    startActivity(intent);
                 }
             });
         }
@@ -205,13 +207,6 @@ public class FriendListFragment extends Fragment{
         @Override
         public int getItemCount() {
             return friendList.size();
-        }
-
-        // Profile Activity 실행
-        private void showProfileActivity(View view , String destinationUid) {
-            Intent intent = new Intent(view.getContext(), ProfileActivity.class);
-            intent.putExtra(ChatActivity.DESTINATION_UID , destinationUid);
-            startActivity(intent);
         }
 
         public class FriendListItemViewHolder extends RecyclerView.ViewHolder{

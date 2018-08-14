@@ -1,5 +1,7 @@
 package com.galid.ongtalk.view.chat;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.ChatModel;
+import com.galid.ongtalk.model.ChatMessageModel;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.util.constant.FirebaseConstant;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,12 +37,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+//TODO 상대가 건 채팅에대해서 오류나는것 해결(상대 UserModel을 받아오기)
 public class ChatActivity extends AppCompatActivity {
     public static final String DESTINATION_UID = "DESTINATIONUID";
 
     private String opponentUid;
     private String myUid;
     private String chatRoomUid;
+
+    private UserModel opponent;
 
     // TODO (CODE:1)코드수정 요구 결합도가 높음
     private RecyclerView recyclerViewChatLog;
@@ -48,6 +54,12 @@ public class ChatActivity extends AppCompatActivity {
     @BindView(R.id.edittext_chatactivity_message)
     public EditText editTextMessage;
 
+    public static Intent newIntent(Context context, String opponentUid){
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.putExtra(DESTINATION_UID, opponentUid);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +67,11 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //채팅을 요구하는 id (나)
-        opponentUid = getIntent().getStringExtra(DESTINATION_UID); // 채팅을 당하는 id (상대)
+
+        if(getIntent() != null) {
+            opponentUid = getIntent().getStringExtra(DESTINATION_UID); // 채팅을 당하는 id (상대)
+            loadOpponent();
+        }
 
         recyclerViewChatLog = findViewById(R.id.recyclerview_chatctivity_chatlog);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -68,18 +84,14 @@ public class ChatActivity extends AppCompatActivity {
         checkDuplicatedChatRoomAndGetChatRoomKey();
     }
 
+    //메시지 보내기 메소드
     @OnClick(R.id.button_chatactivity_send)
     public void sendMessage(){
-        ChatModel chatModel = new ChatModel();
-
-        chatModel.users.add(myUid);          // TODO 처음에만 , 대화방이 생성된 이후에는 요청자는 저장 안되게하기
-        chatModel.users.add(opponentUid);
-
         Date date = new Date();                   // 보낼 때의 시간
         SimpleDateFormat currentTime = new SimpleDateFormat("a hh:mm", Locale.KOREA);
 
         String chatMessage = editTextMessage.getText().toString();      //보낼 메시지
-        final ChatModel.Message chatMessageModel = new ChatModel.Message();   // 서버에 저장될 메시지 형태
+        final ChatMessageModel chatMessageModel = new ChatMessageModel();   // 서버에 저장될 메시지 형태
         chatMessageModel.uid = myUid;
         chatMessageModel.message = chatMessage;
         chatMessageModel.time = currentTime.format(date);
@@ -87,6 +99,11 @@ public class ChatActivity extends AppCompatActivity {
         checkDuplicatedChatRoomAndGetChatRoomKey();
 
         if(chatRoomUid == null){ //중복 안된 경우
+            ChatModel chatModel = new ChatModel();
+
+            chatModel.users.add(myUid);          // TODO 처음에만 , 대화방이 생성된 이후에는 요청자는 저장 안되게하기
+            chatModel.users.add(opponentUid);
+
             FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_CHATROOM).push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -132,18 +149,9 @@ public class ChatActivity extends AppCompatActivity {
         editTextMessage.setText("");
     }
 
-    // Recyclerview Adapter
-    class ChatAdapter extends RecyclerView.Adapter{
-        public static final int VIEWTYPE_SENDMESSAGE = 0;
-        public static final int VIEWTYPE_RECEIVEMESSAGE = 1;
-
-        private List<ChatModel.Message> messages;
-        private UserModel opponent;
-
-        public ChatAdapter() {
-            messages = new ArrayList<>();
-
-            FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponentUid)
+    // 상대 채팅자 객체 받기 (비동기라 그냥넘어가는 문제 해결하기)
+    private void loadOpponent(){
+        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponentUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -151,9 +159,20 @@ public class ChatActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
+    }
+
+
+    // Recyclerview Adapter
+    class ChatAdapter extends RecyclerView.Adapter{
+        public static final int VIEWTYPE_SENDMESSAGE = 0;
+        public static final int VIEWTYPE_RECEIVEMESSAGE = 1;
+
+        private List<ChatMessageModel> messages;
+
+        public ChatAdapter() {
+            messages = new ArrayList<>();
         }
 
         //TODO (CODE:1)이 코드를 어디선가 꼭 호출해야한다 그 호출하는 클래스와의 결합도를 낮추기위해 이코드를 나중에 수정하자
@@ -165,7 +184,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         messages.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            messages.add(snapshot.getValue(ChatModel.Message.class));
+                            messages.add(snapshot.getValue(ChatMessageModel.class));
                         }
                         notifyDataSetChanged();
 
@@ -232,7 +251,7 @@ public class ChatActivity extends AppCompatActivity {
             textViewSendTime = itemView.findViewById(R.id.textview_chatactivity_item_sendtime);
         }
 
-        public void bindSendMessage(ChatModel.Message message){
+        public void bindSendMessage(ChatMessageModel message){
             textViewSendMessages.setText(message.message);
             textViewSendTime.setText(message.time);
         }
@@ -254,7 +273,7 @@ public class ChatActivity extends AppCompatActivity {
             textViewReceiveTime = itemView.findViewById(R.id.textview_chatactivity_item_receivetime);
         }
 
-        public void bindReceiveMessage(ChatModel.Message message , UserModel opponent){
+        public void bindReceiveMessage(ChatMessageModel message , UserModel opponent){
             textViewReceiveMessages.setText(message.message);
             textViewReceiveName.setText(opponent.userName);
             textViewReceiveTime.setText(message.time);

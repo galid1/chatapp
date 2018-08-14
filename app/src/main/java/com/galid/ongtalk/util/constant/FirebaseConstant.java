@@ -2,12 +2,12 @@ package com.galid.ongtalk.util.constant;
 
 public class FirebaseConstant {
     //#### DATABASE ####
-    public static final String FIREBASE_DATABASE_USERLIST = "USERS";
-    public static final String FIREBASE_DATABASE_FRIENDLIST = "FRIENDS";
-    public static final String FIREBASE_DATABASE_CHATROOM = "CHATROOMS";
-    public static final String FIREBASE_DATABASE_CHATMESSAGE = "CHATMESSAGES";
+    public static final String FIREBASE_DATABASE_USERLIST = "users";
+    public static final String FIREBASE_DATABASE_FRIENDLIST = "friends";
+    public static final String FIREBASE_DATABASE_CHATROOM = "chatrooms";
+    public static final String FIREBASE_DATABASE_CHATMESSAGE = "chatmessages";
 
     //#### STORAGE ####
-    public static final String FIREBASE_STORAGE_USERIMAGE = "USERIMAGES";
+    public static final String FIREBASE_STORAGE_USERIMAGE = "userimages";
 
 }
