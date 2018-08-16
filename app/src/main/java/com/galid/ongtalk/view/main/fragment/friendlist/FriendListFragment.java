@@ -1,6 +1,7 @@
 package com.galid.ongtalk.view.main.fragment.friendlist;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,9 +12,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +22,6 @@ import com.galid.ongtalk.R;
 import com.galid.ongtalk.util.constant.FirebaseConstant;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.view.addfriend.AddFriendActivity;
-import com.galid.ongtalk.view.chat.ChatActivity;
 import com.galid.ongtalk.view.profile.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,12 +34,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 //TODO  최근 추가된 친구, 친구 정렬
 public class FriendListFragment extends Fragment{
     public static final String TAG_FRAGMENT = "FRIENDLIST";
 
+    private LinearLayout linearLayoutMyProfileBar;
     private TextView textViewMyName;
     private TextView textViewFriendListNum;
     private ImageView imageViewMyProfileImage;
@@ -47,6 +47,7 @@ public class FriendListFragment extends Fragment{
     private EditText editTextSearch;
 
     private FriendListFragmentAdapter adapter;
+    private UserModel me;
 
     //TODO 내프로필 누르면 다른사람 누르는것과 같게 구현
 
@@ -60,6 +61,7 @@ public class FriendListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final View friendListFragment = inflater.inflate(R.layout.fragment_main_friendlist, container , false);
 
+        linearLayoutMyProfileBar = friendListFragment.findViewById(R.id.linearlayout_friendlistfragment_myprofilebar);
         textViewMyName = friendListFragment.findViewById(R.id.textview_friendlistfragment_myname);
         textViewFriendListNum = friendListFragment.findViewById(R.id.textview_friendlistfragment_friendlistnum);
         imageViewMyProfileImage = friendListFragment.findViewById(R.id.imageview_friendlistfragment_myprofileimage);
@@ -79,7 +81,7 @@ public class FriendListFragment extends Fragment{
         FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(myUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                UserModel me = dataSnapshot.getValue(UserModel.class);
+                me = dataSnapshot.getValue(UserModel.class);
                 textViewMyName.setText(me.userName);
 
                 if (getActivity().isFinishing())
@@ -91,10 +93,18 @@ public class FriendListFragment extends Fragment{
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
+        // 내프로필 창 열기 리스너 달기
+        linearLayoutMyProfileBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProfile(getActivity(), me);
+            }
+        });
+
+        // recyclerview 생성 코드
         RecyclerView recyclerViewFriendList = friendListFragment.findViewById(R.id.recyclerview_friendlistfragment_friendlist);
         recyclerViewFriendList.setLayoutManager(new LinearLayoutManager(container.getContext()));
         adapter = new FriendListFragmentAdapter();
@@ -120,6 +130,11 @@ public class FriendListFragment extends Fragment{
         return friendListFragment;
     }
 
+    private void showProfile(Context context, UserModel opponent){
+        Intent intent = ProfileActivity.newIntent(context, opponent);
+        startActivity(intent);
+    }
+
     public class FriendListFragmentAdapter extends RecyclerView.Adapter<FriendListFragmentAdapter.FriendListItemViewHolder> {
 
         private List<UserModel> friendList;
@@ -133,31 +148,31 @@ public class FriendListFragment extends Fragment{
 
             FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(myUid).child(FirebaseConstant.FIREBASE_DATABASE_FRIENDLIST)
                     .addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    friendList.clear();
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        UserModel user = snapshot.getValue(UserModel.class);
-                        // 내 아이디와 같다면 패스
-                        if(myUid.equals(user.uid))
-                            continue;
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            friendList.clear();
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                UserModel user = snapshot.getValue(UserModel.class);
+                                // 내 아이디와 같다면 패스
+                                if(myUid.equals(user.uid))
+                                    continue;
 
-                        // 아니라면 보여질 데이타셋에 추가
-                        friendList.add(user);
-                        // 친구숫자 셋팅
-                        textViewFriendListNum.setText(Integer.toString(friendList.size()));
-                    }
-                    // 친구검색을 위한 리스트에 전체 친구목록을 복사해 놓는다
-                    searchList.addAll(friendList);
+                                // 아니라면 보여질 데이타셋에 추가
+                                friendList.add(user);
+                                // 친구숫자 셋팅
+                                textViewFriendListNum.setText(Integer.toString(friendList.size()));
+                            }
+                            // 친구검색을 위한 리스트에 전체 친구목록을 복사해 놓는다
+                            searchList.addAll(friendList);
 
-                    notifyDataSetChanged();
-                }
+                            notifyDataSetChanged();
+                        }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                        }
+                    });
         }
 
         // 검색을 수행하는 메소드
@@ -202,8 +217,7 @@ public class FriendListFragment extends Fragment{
                 @Override
                 public void onClick(View view) {
                     UserModel opponent = friendList.get(position);
-                    Intent intent = ProfileActivity.newIntent(view.getContext(), opponent);
-                    startActivity(intent);
+                    showProfile(view.getContext(), opponent);
                 }
             });
         }
