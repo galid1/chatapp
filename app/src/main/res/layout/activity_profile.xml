@@ -7,87 +7,8 @@
     tools:context=".view.profile.ProfileActivity">
 
     <FrameLayout
-        android:id="@+id/framelayout_profileactivity_backgroundimage"
+        android:id="@+id/framelayout_profileactivity_fragment"
         android:layout_width="match_parent"
-        android:layout_height="346dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <ImageView
-            android:id="@+id/imageview_profileactivity_backgroundimage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2_profileactivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/framelayout_profileactivity_backgroundimage"
-        app:layout_constraintVertical_bias="0.117">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageview_profileactivity_profileimage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/ic_account" />
-        <TextView
-            android:id="@+id/textview_profileactivity_name"
-            android:textSize="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="이름" />
-        <TextView
-            android:id="@+id/textview_profileactivity_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="전화번호" />
-    </LinearLayout>
-
-    <GridLayout
-        android:id="@+id/gridLayout_profileactivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alignmentMode="alignMargins"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2_profileactivity"
-        app:layout_constraintVertical_bias="0.341">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageview_profileactivity_chat"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_chat" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_account" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_friendlist" />
-    </GridLayout>
-
-
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

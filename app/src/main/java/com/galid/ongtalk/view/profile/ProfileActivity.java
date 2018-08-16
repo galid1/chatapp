@@ -1,32 +1,21 @@
 package com.galid.ongtalk.view.profile;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.view.chat.ChatActivity;
+import com.galid.ongtalk.view.profile.fragment.MyProfileFragment;
+import com.galid.ongtalk.view.profile.fragment.OtherProfileFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity{
-
-    @BindView(R.id.imageview_profileactivity_profileimage)
-    public CircleImageView imageViewOpponentProfile;
-    @BindView(R.id.textview_profileactivity_name)
-    public TextView textViewOpponentName;
-    @BindView(R.id.textview_profileactivity_phone)
-    public TextView textViewopponentPhone;
-
-    private UserModel opponent;
 
     public static Intent newIntent(Context context, UserModel opponent){
         Intent intent = new Intent(context, ProfileActivity.class);
@@ -34,30 +23,49 @@ public class ProfileActivity extends AppCompatActivity{
         return intent;
     }
 
+    private String myUid;
+    private UserModel opponent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
 
+        myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         opponent = (UserModel) getIntent().getSerializableExtra(ChatActivity.OPPONENT);
-        bindView(opponent);
+
+        // 내프로필 클릭됨
+        if(myUid.equals(opponent.uid)){
+            attachMyProfileFragment();
+        }// 다른사람의 프로필 클릭됨
+        else{
+            attachOtherProfileFragment();
+        }
     }
 
-    public void bindView(UserModel opponentUserModel){
-        textViewOpponentName.setText(opponentUserModel.userName);
-        //TODO PHONE 넘버
-        Glide.with(imageViewOpponentProfile)
-                .load(opponentUserModel.profileImageUrl)
-                .into(imageViewOpponentProfile);
+    public void attachMyProfileFragment(){
+        MyProfileFragment myProfileFragment = MyProfileFragment.newInstance(opponent);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_profileactivity_fragment);
+
+        if(fragment == null){
+            getFragmentManager().beginTransaction().add(R.id.framelayout_profileactivity_fragment, myProfileFragment).commit();
+        }
+        else{
+            getFragmentManager().beginTransaction().replace(R.id.framelayout_profileactivity_fragment, myProfileFragment, MyProfileFragment.TAG_FRAGMENT).commit();
+        }
     }
 
-    // 채팅 버튼 클릭시
-    @OnClick(R.id.imageview_profileactivity_chat)
-    public void showChatActivity(){
-        Intent intent = ChatActivity.newIntent(this, opponent);
-        startActivity(intent);
-        finish();
+    public void attachOtherProfileFragment(){
+        OtherProfileFragment otherProfileFragment = OtherProfileFragment.newInstance(opponent);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_profileactivity_fragment);
+
+        if(fragment == null){
+            getFragmentManager().beginTransaction().add(R.id.framelayout_profileactivity_fragment, otherProfileFragment).commit();
+        }
+        else{
+            getFragmentManager().beginTransaction().replace(R.id.framelayout_mainactivity_fragment, otherProfileFragment, OtherProfileFragment.TAG_FRAGMENT).commit();
+        }
     }
 
 }
