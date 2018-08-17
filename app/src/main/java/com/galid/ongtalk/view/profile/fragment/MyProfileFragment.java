@@ -46,7 +46,7 @@ public class MyProfileFragment extends Fragment {
         textViewMyName = myProfileFragment.findViewById(R.id.textview_myprofilefragment_name);
         textViewMyPhone = myProfileFragment.findViewById(R.id.textview_myprofilefragment_phone);
 
-        myProfileFragment.setOnClickListener(new View.OnClickListener() {
+        imageViewChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showChatActivity();
