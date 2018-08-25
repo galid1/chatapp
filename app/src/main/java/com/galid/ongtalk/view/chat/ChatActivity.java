@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-//TODO 상대가 건 채팅에대해서 오류나는것 해결(상대 UserModel을 받아오기)
+//TODO 대화상대 추가 만들기 (사이드 슬립 네비게이션 만들기) , 대화 메시지 검색 만들기
 public class ChatActivity extends AppCompatActivity {
     public static final String OPPONENT = "OPPONENT";
 
@@ -145,20 +145,6 @@ public class ChatActivity extends AppCompatActivity {
     // 채팅 메시지창을 empty로만든다
     private void makeChatEmpty(){
         editTextMessage.setText("");
-    }
-
-    // 상대 채팅자 객체 받기 (비동기라 그냥넘어가는 문제 해결하기)
-    private void loadOpponent(){
-        FirebaseDatabase.getInstance().getReference().child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).child(opponent.uid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        opponent = dataSnapshot.getValue(UserModel.class);
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
     }
 
     // Recyclerview Adapter

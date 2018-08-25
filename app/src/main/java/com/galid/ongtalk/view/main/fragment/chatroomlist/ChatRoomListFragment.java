@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-//TODO 채팅방 이름 변경 가능하게 DEFAULT는 상대방 이름(닉네임)
+//TODO 채팅방 이름 변경 가능하게 DEFAULT는 상대방 이름(닉네임) , 채팅방 추가 버튼 만들기
 public class ChatRoomListFragment extends Fragment{
     public static final String TAG_FRAGMENT = "CHATROOMLIST";
 
