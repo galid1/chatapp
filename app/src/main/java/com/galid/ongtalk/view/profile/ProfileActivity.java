@@ -5,17 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.view.chat.ChatActivity;
 import com.galid.ongtalk.view.profile.fragment.MyProfileFragment;
 import com.galid.ongtalk.view.profile.fragment.OtherProfileFragment;
+import com.galid.ongtalk.view.profile.fragment.ProfileImageFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
-import butterknife.ButterKnife;
-
-public class ProfileActivity extends AppCompatActivity{
+public class ProfileActivity extends AppCompatActivity implements ShowImage{
 
     public static Intent newIntent(Context context, UserModel opponent){
         Intent intent = new Intent(context, ProfileActivity.class);
@@ -30,7 +32,6 @@ public class ProfileActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        ButterKnife.bind(this);
 
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         opponent = (UserModel) getIntent().getSerializableExtra(ChatActivity.OPPONENT);
@@ -64,7 +65,20 @@ public class ProfileActivity extends AppCompatActivity{
             getFragmentManager().beginTransaction().add(R.id.framelayout_profileactivity_fragment, otherProfileFragment).commit();
         }
         else{
-            getFragmentManager().beginTransaction().replace(R.id.framelayout_mainactivity_fragment, otherProfileFragment, OtherProfileFragment.TAG_FRAGMENT).commit();
+            getFragmentManager().beginTransaction().replace(R.id.framelayout_profileactivity_fragment, otherProfileFragment, OtherProfileFragment.TAG_FRAGMENT).commit();
+        }
+    }
+
+    @Override
+    public void showFullScreenProfileImage(UserModel user) {
+        ProfileImageFragment profileImageFragment = ProfileImageFragment.newInstance(user);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.framelayout_profileactivity_fragment);
+
+        if(fragment == null){
+            getFragmentManager().beginTransaction().add(R.id.framelayout_profileactivity_fragment, profileImageFragment).commit();
+        }
+        else{
+            getFragmentManager().beginTransaction().replace(R.id.framelayout_profileactivity_fragment, profileImageFragment, ProfileImageFragment.TAG_FRAGMENT).commit();
         }
     }
 

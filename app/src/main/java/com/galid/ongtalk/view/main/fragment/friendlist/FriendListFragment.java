@@ -84,9 +84,6 @@ public class FriendListFragment extends Fragment{
                 me = dataSnapshot.getValue(UserModel.class);
                 textViewMyName.setText(me.userName);
 
-                if (getActivity().isFinishing())
-                    return;
-
                 Glide.with(imageViewMyProfileImage)
                         .load(me.profileImageUrl)
                         .into(imageViewMyProfileImage);

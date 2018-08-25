@@ -1,6 +1,7 @@
 package com.galid.ongtalk.view.profile.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,18 +14,19 @@ import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.view.chat.ChatActivity;
+import com.galid.ongtalk.view.profile.ShowImage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OtherProfileFragment extends Fragment {
 
     public static final String TAG_FRAGMENT = "OTHERPROFILE";
-    public static final String ARGS_OPPONENT = "OPPONENT";
+    public static final String ARGS_USERMODEL_OPPONENT = "OPPONENT";
 
     public static OtherProfileFragment newInstance(UserModel opponent){
         OtherProfileFragment otherProfileFragment = new OtherProfileFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARGS_OPPONENT, opponent);
+        args.putSerializable(ARGS_USERMODEL_OPPONENT, opponent);
         otherProfileFragment.setArguments(args);
         return otherProfileFragment;
     }
@@ -35,6 +37,17 @@ public class OtherProfileFragment extends Fragment {
     public TextView textViewOpponentPhone;
 
     private UserModel opponent;
+    private ShowImage mCallbacks;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof ShowImage)
+            mCallbacks = (ShowImage)context;
+        else
+            throw new IllegalArgumentException("Must Implements ShowImage");
+    }
 
     @Nullable
     @Override
@@ -46,16 +59,16 @@ public class OtherProfileFragment extends Fragment {
         textViewOpponentName = otherProfileFragment.findViewById(R.id.textview_otherprofilefragment_name);
         textViewOpponentPhone = otherProfileFragment.findViewById(R.id.textview_otherprofilefragment_phone);
 
-        imageViewChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showChatActivity();
-            }
+        imageViewChat.setOnClickListener((view) -> {
+            showChatActivity();
+        });
+        imageViewOpponentProfile.setOnClickListener((view) -> {
+            mCallbacks.showFullScreenProfileImage(opponent);
         });
 
         Bundle args = getArguments();
         if(args != null)
-            opponent = (UserModel) args.getSerializable(ARGS_OPPONENT);
+            opponent = (UserModel) args.getSerializable(ARGS_USERMODEL_OPPONENT);
         bindView(opponent);
 
         return otherProfileFragment;
@@ -76,4 +89,9 @@ public class OtherProfileFragment extends Fragment {
                 .into(imageViewOpponentProfile);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 }
