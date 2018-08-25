@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 //TODO 채팅방 이름 변경 가능하게 DEFAULT는 상대방 이름(닉네임) , 채팅방 추가 버튼 만들기
 public class ChatRoomListFragment extends Fragment{
     public static final String TAG_FRAGMENT = "CHATROOMLIST";
@@ -90,7 +92,7 @@ public class ChatRoomListFragment extends Fragment{
 
         @Override
         public ChatRoomListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View chatRoomListItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_chatrommlist_item_chatroom, parent , false);
+            View chatRoomListItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_chatrommlistfragment_item_chatroom, parent , false);
             return new ChatRoomListViewHolder(chatRoomListItem);
         }
 
@@ -159,7 +161,7 @@ public class ChatRoomListFragment extends Fragment{
     }
 
     private class ChatRoomListViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageViewProfile;
+        CircleImageView imageViewProfile;
         TextView textViewChatRoomName;
         TextView textViewLastMessage;
         TextView textViewLastMessageTime;

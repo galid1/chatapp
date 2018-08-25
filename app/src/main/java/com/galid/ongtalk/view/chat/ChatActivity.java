@@ -36,6 +36,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 //TODO 대화상대 추가 만들기 (사이드 슬립 네비게이션 만들기) , 대화 메시지 검색 만들기
 public class ChatActivity extends AppCompatActivity {
@@ -243,7 +244,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // 상대가 보내는 메시지 뷰홀더
     private class ReceiveMessageViewHolder extends RecyclerView.ViewHolder{
-        ImageView imageViewReceiveProfile;
+        CircleImageView imageViewReceiveProfile;
         TextView textViewReceiveName;
         TextView textViewReceiveMessages;
         TextView textViewReceiveTime;

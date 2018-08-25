@@ -4,7 +4,7 @@
     android:layout_height="60dp"
     >
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageview_chatroomlistfragment_item_profile"
         android:layout_alignParentLeft="true"
         android:layout_width="50dp"

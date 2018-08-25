@@ -34,6 +34,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 //TODO  최근 추가된 친구, 친구 정렬
 public class FriendListFragment extends Fragment{
@@ -42,7 +43,7 @@ public class FriendListFragment extends Fragment{
     private LinearLayout linearLayoutMyProfileBar;
     private TextView textViewMyName;
     private TextView textViewFriendListNum;
-    private ImageView imageViewMyProfileImage;
+    private CircleImageView imageViewMyProfileImage;
     private ImageView buttonAddFriend;
     private EditText editTextSearch;
 
@@ -226,7 +227,7 @@ public class FriendListFragment extends Fragment{
 
         public class FriendListItemViewHolder extends RecyclerView.ViewHolder{
             @BindView(R.id.imageview_friendlistfragment_item_profileimage)
-            ImageView imageViewProfileImage;
+            CircleImageView imageViewProfileImage;
             @BindView(R.id.textview_friendlistfragment_item_name)
             TextView textViewName;
 

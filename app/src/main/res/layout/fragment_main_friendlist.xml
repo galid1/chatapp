@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearlayout_friendlistfragment_myprofilenoticebar"
         android:orientation="horizontal">
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageview_friendlistfragment_myprofileimage"
             android:layout_width="50dp"
             android:layout_height="50dp"

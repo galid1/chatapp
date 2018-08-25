@@ -33,6 +33,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddFriendActivity extends AppCompatActivity {
 
@@ -252,7 +253,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
     public class AddFriendItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.imageview_addfriendactivity_item_profileimage)
-        ImageView imageViewProfileImage;
+        CircleImageView imageViewProfileImage;
         @BindView(R.id.textview_addfriendactivity_item_name)
         TextView textViewName;
 

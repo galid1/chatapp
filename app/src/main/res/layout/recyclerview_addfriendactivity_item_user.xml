@@ -4,7 +4,7 @@
     android:layout_height="60dp"
     android:orientation="horizontal">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageview_addfriendactivity_item_profileimage"
         android:layout_width="50dp"
         android:layout_height="50dp"
