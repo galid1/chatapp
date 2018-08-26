@@ -72,13 +72,14 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
                 if(user != null){
-                    //TODO SIGN IN
+                    // 이미 로그인중
                     Intent intent = new Intent(LoginActivity.this ,MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
                 else{
-                    //TODO SIGN OUT
+                    // 로그인 상태 아님
+
                 }
             }
         };

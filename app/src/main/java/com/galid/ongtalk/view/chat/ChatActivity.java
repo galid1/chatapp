@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +53,8 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerViewChatLog;
     private ChatAdapter chatAdapter;
 
+    @BindView(R.id.edittext_friendlistfragment_search)
+    public EditText editTextSearch;
     @BindView(R.id.edittext_chatactivity_message)
     public EditText editTextMessage;
 
@@ -67,7 +71,6 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //채팅을 요구하는 id (나)
-
         if(getIntent() != null) {
             opponent = (UserModel) getIntent().getSerializableExtra(OPPONENT); // 채팅을 당하는 id (상대)
         }
@@ -78,6 +81,23 @@ public class ChatActivity extends AppCompatActivity {
         recyclerViewChatLog.setLayoutManager(linearLayoutManager);
         chatAdapter = new ChatAdapter();
         recyclerViewChatLog.setAdapter(chatAdapter);
+
+        // 검색을 위한 리스너
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // input창에 문자를 입력할때마다 호출된다.
+                // search 메소드를 호출한다.
+                String searchMessage = editTextSearch.getText().toString();
+                chatAdapter.search(searchMessage);
+            }
+        });
 
         // 액티비티 생성시 이미 생성된 채팅방인지 확인
         checkDuplicatedChatRoomAndGetChatRoomKey();
@@ -157,6 +177,18 @@ public class ChatActivity extends AppCompatActivity {
 
         public ChatAdapter() {
             messages = new ArrayList<>();
+        }
+
+       //TODO 채팅내역 검색메소드
+        public void search(String searchMessage){
+            for(int i = 0;i < messages.size(); i++)
+            {
+                // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+                if (messages.get(i).message.toLowerCase().contains(searchMessage))
+                {
+                    recyclerViewChatLog.scrollToPosition(i);
+                }
+            }
         }
 
         //TODO (CODE:1)이 코드를 어디선가 꼭 호출해야한다 그 호출하는 클래스와의 결합도를 낮추기위해 이코드를 나중에 수정하자

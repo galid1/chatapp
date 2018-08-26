@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.model.UserModel;
 
+//TODO 프로필 이미지 여러장 가능하게
 public class ProfileImageFragment extends Fragment {
 
     public static final String TAG_FRAGMENT = "PROFILEIMAGE";

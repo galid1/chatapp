@@ -20,13 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.login.LoginActivity" />
-        <activity android:name=".view.join.JoinActivity" />
+        <activity android:name=".view.join.JoinActivity"/>
         <activity android:name=".view.main.MainActivity" />
         <activity android:name=".view.profile.ProfileActivity" />
-        <activity android:name=".view.chat.ChatActivity" />
-        <activity android:name=".test.TesterActivity" />
-        <activity android:name=".test.TestActivity" />
-        <activity android:name=".view.addfriend.AddFriendActivity"></activity>
+        <activity android:name=".view.chat.ChatActivity"/>
+        <activity android:name=".view.addfriend.AddFriendActivity"/>
     </application>
 
 </manifest>
