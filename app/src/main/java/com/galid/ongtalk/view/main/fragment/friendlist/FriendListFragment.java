@@ -48,6 +48,8 @@ public class FriendListFragment extends Fragment{
     private ImageView buttonAddFriend;
     private EditText editTextSearch;
 
+    private Callbacks mCallbacks;
+
     private FriendListFragmentAdapter adapter;
     private UserModel me;
 
@@ -56,6 +58,18 @@ public class FriendListFragment extends Fragment{
     public static FriendListFragment newInstance(){
         FriendListFragment friendListFragment = new FriendListFragment();
         return friendListFragment;
+    }
+
+    public interface Callbacks{
+        void loadUserProfileImage(String imageUrl, ImageView imageViewProfile);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof Callbacks)
+            mCallbacks = (Callbacks)context;
     }
 
     @Nullable
@@ -84,9 +98,10 @@ public class FriendListFragment extends Fragment{
                 textViewMyName.setText(me.userName);
 
                 //TODO You cannot start a load for a destroyed activity 에러해결하기
-                Glide.with(getActivity())
+                mCallbacks.loadUserProfileImage(me.profileImageUrl, imageViewMyProfileImage);
+                /*Glide.with(FriendListFragment.this)
                         .load(me.profileImageUrl)
-                        .into(imageViewMyProfileImage);
+                        .into(imageViewMyProfileImage);*/
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -129,6 +144,13 @@ public class FriendListFragment extends Fragment{
         startActivity(intent);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    // Adapter
     public class FriendListFragmentAdapter extends RecyclerView.Adapter<FriendListFragmentAdapter.FriendListItemViewHolder> {
 
         private List<UserModel> friendList;

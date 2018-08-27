@@ -155,10 +155,14 @@ public class ChatActivity extends AppCompatActivity {
     private void sendPushMessage(){
         Gson gson = new Gson();
 
+        String senderName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
         NotificationModel notificationModel = new NotificationModel();
         notificationModel.to = opponent.pushToken;
-        notificationModel.notification.title = "보낸사람";
+        notificationModel.notification.title = senderName;
         notificationModel.notification.text = editTextMessage.getText().toString();
+        notificationModel.data.title = senderName;
+        notificationModel.data.text = editTextMessage.getText().toString();
 
         // Notification 모델을 Json으로 파싱하여 리퀘스트 바디에 담는다
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel));
