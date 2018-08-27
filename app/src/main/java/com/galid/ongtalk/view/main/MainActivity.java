@@ -25,11 +25,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        //첫 화면은 친구목록 프래그먼트
         attachFriendListFragment();
-
+        //하단 네비게이션에 리스너 달기
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-
     }
 
     // 네비게이션 버튼리스너

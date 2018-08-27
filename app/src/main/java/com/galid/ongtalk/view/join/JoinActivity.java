@@ -21,10 +21,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -119,6 +123,7 @@ public class JoinActivity extends AppCompatActivity{
                                         userModel.userName = name;
                                         userModel.profileImageUrl = imageUrl;
                                         userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                        userModel.pushToken = FirebaseInstanceId.getInstance().getToken();
 
                                         JoinActivity.this.finish();
                                         afterJoinSuccess();

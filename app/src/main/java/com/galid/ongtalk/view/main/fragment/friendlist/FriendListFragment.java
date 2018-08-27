@@ -1,5 +1,6 @@
 package com.galid.ongtalk.view.main.fragment.friendlist;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -69,12 +70,9 @@ public class FriendListFragment extends Fragment{
         editTextSearch = friendListFragment.findViewById(R.id.edittext_friendlistfragment_search);
 
         buttonAddFriend = friendListFragment.findViewById(R.id.imageview_friendlistfragment_addfriendbutton);
-        buttonAddFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        buttonAddFriend.setOnClickListener((view)->{
                 Intent intent = new Intent(friendListFragment.getContext(), AddFriendActivity.class);
                 startActivity(intent);
-            }
         });
 
         // 내 프로필 처리 코드
@@ -85,7 +83,8 @@ public class FriendListFragment extends Fragment{
                 me = dataSnapshot.getValue(UserModel.class);
                 textViewMyName.setText(me.userName);
 
-                Glide.with(imageViewMyProfileImage)
+                //TODO You cannot start a load for a destroyed activity 에러해결하기
+                Glide.with(getActivity())
                         .load(me.profileImageUrl)
                         .into(imageViewMyProfileImage);
             }
@@ -95,11 +94,8 @@ public class FriendListFragment extends Fragment{
         });
 
         // 내프로필 창 열기 리스너 달기
-        linearLayoutMyProfileBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        linearLayoutMyProfileBar.setOnClickListener((view) -> {
                 showProfile(getActivity(), me);
-            }
         });
 
         // recyclerview 생성 코드
