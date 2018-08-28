@@ -9,12 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
-import com.galid.ongtalk.model.ChatModel;
+import com.galid.ongtalk.model.ChatRoomModel;
 import com.galid.ongtalk.model.ChatMessageModel;
 import com.galid.ongtalk.model.UserModel;
 import com.galid.ongtalk.util.constant.FirebaseConstant;
@@ -58,7 +57,7 @@ public class ChatRoomListFragment extends Fragment{
 
     class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListViewHolder>{
         // 리사이클러뷰 데이터셋
-        private List<ChatModel> chatRoomList;
+        private List<ChatRoomModel> chatRoomList;
         private String myUid;
 
         public ChatRoomListAdapter() {
@@ -76,7 +75,7 @@ public class ChatRoomListFragment extends Fragment{
                         //채팅방에 내 uid가 포합되어 있으면 채팅방 리스트에 추가 (알고리즘 매우 비효율적)
                         for(DataSnapshot users : item.child(FirebaseConstant.FIREBASE_DATABASE_USERLIST).getChildren()) {
                             if(users.getValue().equals(myUid)) {
-                                ChatModel chatRoom = item.getValue(ChatModel.class);
+                                ChatRoomModel chatRoom = item.getValue(ChatRoomModel.class);
                                 chatRoomList.add(chatRoom);
                             }
                         }

@@ -1,5 +1,6 @@
 package com.galid.ongtalk.view.main.fragment.friendlist;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,8 @@ public class FriendListFragment extends Fragment{
     private ImageView buttonAddFriend;
     private EditText editTextSearch;
 
+    private Callbacks mCallbacks;
+
     private FriendListFragmentAdapter adapter;
     private UserModel me;
 
@@ -55,6 +58,18 @@ public class FriendListFragment extends Fragment{
     public static FriendListFragment newInstance(){
         FriendListFragment friendListFragment = new FriendListFragment();
         return friendListFragment;
+    }
+
+    public interface Callbacks{
+        void loadUserProfileImage(String imageUrl, ImageView imageViewProfile);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof Callbacks)
+            mCallbacks = (Callbacks)context;
     }
 
     @Nullable
@@ -69,12 +84,9 @@ public class FriendListFragment extends Fragment{
         editTextSearch = friendListFragment.findViewById(R.id.edittext_friendlistfragment_search);
 
         buttonAddFriend = friendListFragment.findViewById(R.id.imageview_friendlistfragment_addfriendbutton);
-        buttonAddFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        buttonAddFriend.setOnClickListener((view)->{
                 Intent intent = new Intent(friendListFragment.getContext(), AddFriendActivity.class);
                 startActivity(intent);
-            }
         });
 
         // 내 프로필 처리 코드
@@ -85,9 +97,11 @@ public class FriendListFragment extends Fragment{
                 me = dataSnapshot.getValue(UserModel.class);
                 textViewMyName.setText(me.userName);
 
-                Glide.with(imageViewMyProfileImage)
+                //TODO You cannot start a load for a destroyed activity 에러해결하기
+                mCallbacks.loadUserProfileImage(me.profileImageUrl, imageViewMyProfileImage);
+                /*Glide.with(FriendListFragment.this)
                         .load(me.profileImageUrl)
-                        .into(imageViewMyProfileImage);
+                        .into(imageViewMyProfileImage);*/
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -95,11 +109,8 @@ public class FriendListFragment extends Fragment{
         });
 
         // 내프로필 창 열기 리스너 달기
-        linearLayoutMyProfileBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        linearLayoutMyProfileBar.setOnClickListener((view) -> {
                 showProfile(getActivity(), me);
-            }
         });
 
         // recyclerview 생성 코드
@@ -133,6 +144,13 @@ public class FriendListFragment extends Fragment{
         startActivity(intent);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    // Adapter
     public class FriendListFragmentAdapter extends RecyclerView.Adapter<FriendListFragmentAdapter.FriendListItemViewHolder> {
 
         private List<UserModel> friendList;

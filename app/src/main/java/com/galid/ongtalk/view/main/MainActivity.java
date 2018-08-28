@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.galid.ongtalk.R;
 import com.galid.ongtalk.view.main.fragment.chatroomlist.ChatRoomListFragment;
 import com.galid.ongtalk.view.main.fragment.friendlist.FriendListFragment;
@@ -15,7 +18,7 @@ import com.galid.ongtalk.view.main.fragment.settings.SettingsFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  FriendListFragment.Callbacks{
 
     @BindView(R.id.bottomnavigationview_mainactivity)
     public BottomNavigationView bottomNavigationView;
@@ -25,11 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        //첫 화면은 친구목록 프래그먼트
         attachFriendListFragment();
-
+        //하단 네비게이션에 리스너 달기
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-
     }
 
     // 네비게이션 버튼리스너
@@ -109,4 +111,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // FriendListFragment에서 유저이미지를 로드할때 Glide에서 비동기처리로 인해 액티비티가 종료되었을 경우 오류 해결을 위함
+    @Override
+    public void loadUserProfileImage(String imageUrl, ImageView imageViewProfile) {
+        Glide.with(this)
+                .load(imageUrl)
+                .into(imageViewProfile);
+    }
 }
